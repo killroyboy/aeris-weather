@@ -59,3 +59,10 @@ typings/
 
 # next.js build output
 .next
+
+# WebStorm/IDEA
+.idea
+
+# Files containing ID/secret using in testing
+/test/aeris-id.txt
+/test/aeris-secret.txt
