@@ -59,4 +59,4 @@ In lieu of a formal style guide, take care to maintain the existing coding style
 0.0.1 Initial Release
 
 ## License
-Copyright (c) 2018 Dan Wilson &amp; Skydrop, LLC. Licensed under the MIT license. See LICENSE.
+Copyright (c) 2018 Dan Wilson &amp; Skydrop Holdings, LLC. Licensed under the MIT license. See LICENSE.
