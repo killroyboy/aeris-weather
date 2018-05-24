@@ -1,5 +1,5 @@
 # aeris-weather
-`aeris-weather` is a chainable Node.js client for accessing Aeris Weather API
+`aeris-weather` is a chainable Node.js client for accessing [Aeris Weather API](https://www.aerisweather.com/support/docs/)
 
 ## Getting Started
 ```shell
