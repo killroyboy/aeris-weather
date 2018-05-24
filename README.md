@@ -38,13 +38,25 @@ aerisApi.process(function (err, data) {
 });
 ```
 
-## NOTE
+Batch request for 24 hours and 7 day of forecast:
+```js
+aerisApi.action('closest').place('-45.039948,168.695312').limit(7).filter('day');
+aerisApi.batch('forecasts');
+aerisApi.filter('1hr').limit(24);
+aerisApi.batch('forecasts');
+aerisApi.process(function (err, data) {
+    console.log('Auckland forecast hours', data.response.responses[0].response[0]);
+    console.log('Auckland forecast days', data.response.responses[1].response[0]);
+});
+```
+NOTE: Parameters applying to a batch must be set prior to calling `batch`. In addition parameters persist between batch calls, but can be set to blank or null.
+
+## Starting Point
 This is not a comprehensive SDK implementation and should be taken as a starting point for future implementation. 
 
 Possible Features/Improvements:
 * Validation of available endpoints
 * Validation of actions and filters available with given endpoints
-* Request specific parameters within batch endpoint
 * Better error handling
 
 ## Testing
