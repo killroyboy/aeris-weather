@@ -64,6 +64,8 @@ In order to run unit tests, create the following files within the `test` directo
 * `aeris-id.txt` (should contain a valid app/client ID)
 * `aeris-secret.txt` (should contain a valid secret key)
 
+Then run `npm run test` from the command line.
+
 ## Contributing
 In lieu of a formal style guide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code.
 
