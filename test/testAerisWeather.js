@@ -303,7 +303,7 @@ describe('Aeris Weather Data API Node Client', function () {
 		var api = new AerisApi(cachedDevId, cachedDevSecret);
 		api.should.be.instanceOf(AerisApi);
 
-		api.reset().batch('observations/summary,observations,forecasts').action('closest').place('-45.039948,168.695312').limit(1).filter('allstations').process().then(function (result) {
+		api.reset().action('closest').place('-45.039948,168.695312').limit(1).filter('allstations').batch('observations/summary,observations,forecasts').process().then(function (result) {
 			result.should.be.Object();
 			result.should.have.property('success', true);
 			result.should.have.property('error', null);
@@ -345,6 +345,122 @@ describe('Aeris Weather Data API Node Client', function () {
 
 			done();
 		});
+	});
+
+	it ('should compile a url for batch mode', function (done) {
+		var api = new AerisApi(cachedDevId, cachedDevSecret);
+		api.should.be.instanceOf(AerisApi);
+
+		api.setParams({limit : 1, filter: 'allstations'});
+		api.action('closest');
+		api.place('-45.039948,168.695312');
+		api.endpoint('observations');
+
+		var data = api.compileUrl(true);
+
+		data.should.be.Object();
+		data.error.should.be.false();
+		data.url.should.be.String().and.equal('/observations/closest');
+		data.params.should.be.Object();
+		data.params.p.should.equal('-45.039948,168.695312');
+		data.params.filter.should.equal('allstations');
+
+		done();
+	});
+
+	it ('should add 2 batch request', function (done) {
+		var api = new AerisApi(cachedDevId, cachedDevSecret);
+		api.should.be.instanceOf(AerisApi);
+
+		api.setParams({limit : 1, filter: 'allstations'}).action('closest').place('-45.039948,168.695312');
+		api.addBatch('observations').addBatch('observations/summary');
+
+		api.requests.should.be.Array();
+		api.requests.length.should.be.Number().and.equal(2);
+
+		var data = api.compileUrl();
+
+		data.should.be.Object();
+		data.should.have.property('url', 'https://api.aerisapi.com/batch');
+		data.should.have.property('error', false);
+		data.params.should.be.Object();
+		data.params.should.have.property('p', '-45.039948,168.695312');
+		data.params.should.have.property('filter', 'allstations');
+
+		done();
+	});
+
+	it ('should add 2 batch request for same endpoint', function (done) {
+		var api = new AerisApi(cachedDevId, cachedDevSecret);
+		api.should.be.instanceOf(AerisApi);
+
+		api.setParams({limit : 25, filter: 'allstations,1hr'}).action('closest').place('-45.039948,168.695312');
+		api.batch('forecasts');
+		api.limit(7).filter('allstations');
+		api.batch('forecasts');
+
+		api.process(function (err, result) {
+			err.should.be.false();
+			result.should.be.Object();
+			result.should.have.property('success', true);
+			result.should.have.property('error', null);
+			result.should.have.property('response').and.be.Object();
+			result.response.should.have.property('responses').and.be.Array();
+
+			var hours = result.response.responses[0].response[0],
+				days = result.response.responses[1].response[0];
+
+			hours.should.have.property('interval', '1hr');
+			hours.should.have.property('periods').and.be.Array();
+			hours.periods.length.should.equal(25);
+			days.should.have.property('interval', 'day');
+			days.should.have.property('periods').and.be.Array();
+			days.periods.length.should.equal(7);
+
+			done();
+		});
+	});
+
+	it ('should have 4 batch requests: observations, observations/summary, forecast (7 days), forecast (24hr)', function (done) {
+		var api = new AerisApi(cachedDevId, cachedDevSecret);
+		api.should.be.instanceOf(AerisApi);
+
+		api.setParams({limit: 1, filter: 'allstations'}).action('closest').place('-45.039948,168.695312');
+		api.batch('observations,observations/summary');
+		api.limit(7).filter('day');
+		api.batch('forecasts');
+		api.setParams({limit : 169, filter: '1hr'});
+		api.batch('forecasts');
+
+		api.process(function (err, result) {
+			err.should.be.false();
+			result.should.be.Object();
+
+			result.should.have.property('success', true);
+			result.should.have.property('error', null);
+			result.should.have.property('response').and.be.Object();
+
+			result.response.responses.length.should.equal(4);
+
+
+			result.response.responses[0].request.should.equal('/observations/closest?limit=1&p=-45.039948%2C168.695312&filter=allstations');
+			result.response.responses[1].request.should.equal('/observations/summary/closest?limit=1&p=-45.039948%2C168.695312&filter=allstations');
+			result.response.responses[2].request.should.equal('/forecasts/closest?limit=7&p=-45.039948%2C168.695312&filter=day');
+			result.response.responses[3].request.should.equal('/forecasts/closest?limit=169&p=-45.039948%2C168.695312&filter=1hr');
+
+			var days = result.response.responses[2].response[0],
+				hours = result.response.responses[3].response[0];
+
+			hours.should.have.property('interval', '1hr');
+			hours.should.have.property('periods').and.be.Array();
+			hours.periods.length.should.equal(169);
+			days.should.have.property('interval', 'day');
+			days.should.have.property('periods').and.be.Array();
+			days.periods.length.should.equal(7);
+
+			done();
+		});
+
 	});
 
 });
