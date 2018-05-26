@@ -1,0 +1,35 @@
+{
+  "name": "aeris-weather",
+  "version": "0.0.1",
+  "description": "Node.js Client to access data from Aeris Weather API",
+  "main": "./lib/aeris-weather.js",
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha --reporter spec",
+    "coverage": "node ./node_modules/istanbul/lib/cli.js cover _mocha -- -R spec && open coverage/lcov-report/index.html"
+  },
+  "keywords": [
+    "aeris",
+    "weather"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://killroyboy@github.com/killroyboy/aeris-weather.git"
+  },
+  "author": "Dan Wilson [killroyboy@gmail.com]",
+  "bugs": {
+    "url": "https://github.com/killroyboy/weathercompanyapi-node/issues"
+  },
+  "homepage": "https://github.com/killroyboy/weathercompanyapi-node#readme",
+  "license": "MIT",
+  "dependencies": {
+    "got": "^8.3.1",
+    "lodash": "^4.17.10",
+    "parse-json": "^4.0.0",
+    "querystring": "^0.2.0"
+  },
+  "devDependencies": {
+    "istanbul": "^0.4.5",
+    "mocha": "^5.2.0",
+    "should": "^13.2.1"
+  }
+}
