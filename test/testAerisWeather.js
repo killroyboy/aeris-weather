@@ -463,4 +463,44 @@ describe('Aeris Weather Data API Node Client', function () {
 
 	});
 
+	it ('should have 3 batch requests: observations/summary, forecast (7 days), forecast (24hr and zero hour)', function (done) {
+		var api = new AerisApi(cachedDevId, cachedDevSecret);
+		api.should.be.instanceOf(AerisApi);
+
+		api.setParams({limit: 1, filter: 'allstations'}).action('closest').place('-45.039948,168.695312');
+		api.batch('observations/summary');
+		api.limit(7).filter('day');
+		api.batch('forecasts');
+		api.setParams({limit : 169, filter: '1hr', from: '-1hour'});
+		api.batch('forecasts');
+
+		api.process(function (err, result) {
+			err.should.be.false();
+			result.should.be.Object();
+
+			result.should.have.property('success', true);
+			result.should.have.property('error', null);
+			result.should.have.property('response').and.be.Object();
+
+			result.response.responses.length.should.equal(3);
+
+			result.response.responses[0].request.should.equal('/observations/summary/closest?limit=1&p=-45.039948%2C168.695312&filter=allstations');
+			result.response.responses[1].request.should.equal('/forecasts/closest?limit=7&p=-45.039948%2C168.695312&filter=day');
+			result.response.responses[2].request.should.equal('/forecasts/closest?limit=169&p=-45.039948%2C168.695312&filter=1hr&from=-1hour');
+
+			var days = result.response.responses[1].response[0],
+				hours = result.response.responses[2].response[0];
+
+			hours.should.have.property('interval', '1hr');
+			hours.should.have.property('periods').and.be.Array();
+			hours.periods.length.should.equal(169);
+			days.should.have.property('interval', 'day');
+			days.should.have.property('periods').and.be.Array();
+			days.periods.length.should.equal(7);
+
+			done();
+		});
+
+	});
+
 });

@@ -49,7 +49,7 @@ aerisApi.process(function (err, data) {
     console.log('Auckland forecast days', data.response.responses[1].response[0]);
 });
 ```
-NOTE: Parameters applying to a batch must be set prior to calling `batch`. In addition parameters persist between batch calls, but can be set to blank or null.
+NOTE: Parameters applying to a batch must be set prior to calling `batch`. In addition parameters persist between batch calls, but can be set to blank or null. Parameters DO NOT persist between process calls.
 
 ## Starting Point
 This is not a comprehensive SDK implementation and should be taken as a starting point for future implementation. 
