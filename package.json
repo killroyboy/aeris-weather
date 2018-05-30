@@ -1,6 +1,6 @@
 {
   "name": "aeris-weather",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Node.js Client to access data from Aeris Weather API",
   "main": "./lib/aeris-weather.js",
   "scripts": {
