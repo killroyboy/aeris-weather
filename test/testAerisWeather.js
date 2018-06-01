@@ -461,6 +461,58 @@ describe('Aeris Weather Data API Node Client', function () {
 
 	});
 
+	it ('should have 4 batch requests: observations (with no_data_warning), observations/summary (with no_data_warning), forecast (7 days), forecast (24hr)', function (done) {
+		// 7.228594,80.708443 - Sri Lanka
+
+		var api = new AerisApi(cachedDevId, cachedDevSecret);
+		api.should.be.instanceOf(AerisApi);
+
+		api.setParams({limit: 1, filter: 'allstations'}).action('closest').place('7.228594,80.708443');
+		api.batch('observations,observations/summary');
+		api.limit(7).filter('day');
+		api.batch('forecasts');
+		api.setParams({limit : 168, filter: '1hr'});
+		api.batch('forecasts');
+
+		api.process(function (err, result) {
+			err.should.be.false();
+			result.should.be.Object();
+
+			result.should.have.property('success', true);
+			result.should.have.property('error', null);
+			result.should.have.property('response').and.be.Object();
+
+			result.response.responses.length.should.equal(4);
+
+
+			result.response.responses[0].request.should.equal('/observations/closest?limit=1&p=7.228594%2C80.708443&filter=allstations');
+			result.response.responses[1].request.should.equal('/observations/summary/closest?limit=1&p=7.228594%2C80.708443&filter=allstations');
+			result.response.responses[2].request.should.equal('/forecasts/closest?limit=7&p=7.228594%2C80.708443&filter=day');
+			result.response.responses[3].request.should.equal('/forecasts/closest?limit=168&p=7.228594%2C80.708443&filter=1hr');
+
+			var current = result.response.responses[0],
+				summary = result.response.responses[1],
+				days = result.response.responses[2].response[0],
+				hours = result.response.responses[3].response[0];
+
+			current.should.have.property('error').and.be.Object();
+			current.error.should.have.property('code', 'warn_no_data');
+			summary.should.have.property('error').and.be.Object();
+			summary.error.should.have.property('code', 'warn_no_data');
+
+			days.should.have.property('interval', 'day');
+			days.should.have.property('periods').and.be.Array();
+			days.periods.length.should.equal(7);
+
+			hours.should.have.property('interval', '1hr');
+			hours.should.have.property('periods').and.be.Array();
+			hours.periods.length.should.equal(168);
+
+			done();
+		});
+
+	});
+
 	it ('should have 3 batch requests: observations/summary, forecast (7 days), forecast (24hr and zero hour)', function (done) {
 		var api = new AerisApi(cachedDevId, cachedDevSecret);
 		api.should.be.instanceOf(AerisApi);
@@ -498,10 +550,9 @@ describe('Aeris Weather Data API Node Client', function () {
 
 			done();
 		});
-
 	});
 
-	it ('should reset request between process requests', function (done) {
+	it ('should reset batches between process requests', function (done) {
 		var api = new AerisApi(cachedDevId, cachedDevSecret);
 		api.should.be.instanceOf(AerisApi);
 
@@ -530,7 +581,25 @@ describe('Aeris Weather Data API Node Client', function () {
 				done();
 			});
 		});
-
 	});
 
+	it ('should result in no data warning', function (done) {
+		// 7.228594,80.708443 - Sri Lanka
+
+		var api = new AerisApi(cachedDevId, cachedDevSecret);
+		api.should.be.instanceOf(AerisApi);
+
+		api.action('closest').place('7.228594,80.708443').setParams({limit: 1, filter: 'allstations'}).endpoint('observations');
+
+		api.process(function (err, result) {
+			err.should.be.false();
+			result.should.be.Object();
+
+			result.should.have.property('success', true);
+			result.should.have.property('error').and.be.Object();
+			result.error.should.have.property('code', 'warn_no_data');
+
+			done();
+		});
+	});
 });
