@@ -69,8 +69,5 @@ Then run `npm run test` from the command line.
 ## Contributing
 In lieu of a formal style guide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code.
 
-## Release History
-0.0.1 Initial Release
-
 ## License
 Copyright (c) 2018 Dan Wilson &amp; Skydrop Holdings, LLC. Licensed under the MIT license. See LICENSE.
