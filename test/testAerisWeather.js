@@ -602,4 +602,34 @@ describe('Aeris Weather Data API Node Client', function () {
 			done();
 		});
 	});
+
+	it ('should return only specified fields to today historical forecast using from/to', function (done) {
+		var api = new AerisApi(cachedDevId, cachedDevSecret);
+		api.should.be.instanceOf(AerisApi);
+
+		api.action('closest').place('40.3916172,-111.8507662').from('today').to('now').endpoint('forecasts');
+		api.fields('periods.dateTimeISO,periods.maxTempF,periods.minTempF,periods.weather,periods.pop,periods.precipIN,periods.precipMM');
+		api.process().then(function (results) {
+			results.should.be.Object();
+
+			results.should.have.property('success', true);
+			results.should.have.property('error', null);
+			results.should.have.property('response').and.be.Array();
+
+			results.response[0].should.have.property('periods').and.be.Array();
+			results.response[0].should.have.property('periods').and.be.Array();
+
+			var firstPeriod = results.response[0].periods[0];
+			firstPeriod.should.have.size(7);
+			firstPeriod.should.have.property('dateTimeISO');
+			firstPeriod.should.have.property('maxTempF');
+			firstPeriod.should.have.property('minTempF');
+			firstPeriod.should.have.property('weather');
+			firstPeriod.should.have.property('pop');
+			firstPeriod.should.have.property('precipIN');
+			firstPeriod.should.have.property('precipMM');
+
+			done();
+		});
+	});
 });

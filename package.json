@@ -17,9 +17,9 @@
   },
   "author": "Dan Wilson [killroyboy@gmail.com]",
   "bugs": {
-    "url": "https://github.com/killroyboy/weathercompanyapi-node/issues"
+    "url": "https://github.com/killroyboy/aeris-weather/issues"
   },
-  "homepage": "https://github.com/killroyboy/weathercompanyapi-node#readme",
+  "homepage": "https://github.com/killroyboy/aeris-weather#readme",
   "license": "MIT",
   "dependencies": {
     "got": "^8.3.1",
