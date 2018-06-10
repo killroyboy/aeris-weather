@@ -632,4 +632,33 @@ describe('Aeris Weather Data API Node Client', function () {
 			done();
 		});
 	});
+
+	it ('should return 4 batch requests (observation, observations/summary, forecasts (1hr), forests (day) for Australia', function (done) {
+		var api = new AerisApi(cachedDevId, cachedDevSecret);
+		api.should.be.instanceOf(AerisApi);
+
+		api.reset().action('closest').place('40.008213,-111.676392').limit(1).filter('allstations').batch('observations,observations/summary');
+		api.filter('1hr').limit(24 * 7).batch('forecasts');
+		api.filter('day').limit(7).batch('forecasts');
+
+		api.process().then(function (result) {
+			// console.log('result', JSON.stringify(result.response.responses));
+			// console.log('results', result.response.responses);
+
+			result.should.have.property('success', true);
+			result.should.have.property('error', null);
+			result.should.have.property('response').and.be.Object();
+
+			result.response.should.have.property('responses').and.be.Array();
+			result.response.responses.length.should.equal(4);
+
+			var responses = result.response.responses;
+			responses[0].request.should.equal('/observations/closest?limit=1&p=40.008213%2C-111.676392&filter=allstations');
+			responses[1].request.should.equal('/observations/summary/closest?limit=1&p=40.008213%2C-111.676392&filter=allstations');
+			responses[2].request.should.equal('/forecasts/closest?limit=168&p=40.008213%2C-111.676392&filter=1hr');
+			responses[3].request.should.equal('/forecasts/closest?limit=7&p=40.008213%2C-111.676392&filter=day');
+
+			done();
+		});
+	});
 });
