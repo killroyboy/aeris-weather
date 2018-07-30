@@ -126,12 +126,7 @@ describe('Aeris Weather Data API Node Client', function () {
 			summary.should.have.property('QC');
 			summary.should.have.property('spressure');
 
-			done();
-		}).catch(function (err) {
-			console.log('error', err);
-			err.should.equal(false);
-			done();
-		});
+		}).then(done, done);
 	});
 
 	it('should return closest observation summary data for geo lat/long', function (done) {
@@ -175,12 +170,7 @@ describe('Aeris Weather Data API Node Client', function () {
 			summary.should.have.property('QC');
 			summary.should.have.property('spressure');
 
-			done();
-		}).catch(function (err) {
-			console.log('error', err);
-			err.should.equal(false);
-			done();
-		});
+		}).then(done, done);
 	});
 
 
@@ -224,12 +214,7 @@ describe('Aeris Weather Data API Node Client', function () {
 			summary.should.have.property('QC');
 			summary.should.have.property('spressure');
 
-			done();
-		}).catch(function (err) {
-			console.log('error', err);
-			err.should.equal(false);
-			done();
-		});
+		}).then(done, done);
 	});
 
 	it('should return closest observation summary data for Auckland, New Zealand (lat/lng)', function (done) {
@@ -271,12 +256,7 @@ describe('Aeris Weather Data API Node Client', function () {
 			summary.should.have.property('QC');
 			summary.should.have.property('spressure');
 
-			done();
-		}).catch(function (err) {
-			console.log('error', err);
-			err.should.equal(false);
-			done();
-		});
+		}).then(done, done);
 	});
 
 	it('should fail to return closest observation summary data for Auckland, New Zealand (lat/lng) because allstations filter', function (done) {
@@ -291,12 +271,7 @@ describe('Aeris Weather Data API Node Client', function () {
 			result.error.should.have.property('code', 'warn_no_data');
 			result.error.should.have.property('description', 'No data was returned for the request.');
 
-			done();
-		}).catch(function (err) {
-			console.log('error', err);
-			err.should.equal(false);
-			done();
-		});
+		}).then(done, done);
 	});
 
 	it('should return closest observation, forecast, and observation summary data for Auckland, New Zealand (lat/lng) using batch', function (done) {
@@ -319,12 +294,7 @@ describe('Aeris Weather Data API Node Client', function () {
 				responses[i].should.have.property('error', null);
 			}
 
-			done();
-		}).catch(function (err) {
-			console.log('error', err);
-			err.should.equal(false);
-			done();
-		});
+		}).then(done, done);
 	});
 
 
@@ -630,8 +600,7 @@ describe('Aeris Weather Data API Node Client', function () {
 			firstPeriod.should.have.property('precipIN');
 			firstPeriod.should.have.property('precipMM');
 
-			done();
-		});
+		}).then(done, done);
 	});
 
 	it ('should return 4 batch requests (observation, observations/summary, forecasts (1hr), forests (day) for Australia', function (done) {
