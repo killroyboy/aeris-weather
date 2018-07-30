@@ -517,8 +517,9 @@ describe('Aeris Weather Data API Node Client', function () {
 		var api = new AerisApi(cachedDevId, cachedDevSecret);
 		api.should.be.instanceOf(AerisApi);
 
-		api.setParams({limit: 1, filter: 'allstations'}).action('closest').place('-45.039948,168.695312');
+		api.setParams({limit: 1, filter: 'allstations'}).action('closest').query('qcmin:10').place('-45.039948,168.695312');
 		api.batch('observations/summary');
+		api.query(); // reset
 		api.limit(7).filter('day');
 		api.batch('forecasts');
 		api.setParams({limit : 169, filter: '1hr', from: '-1hour'});
@@ -534,7 +535,7 @@ describe('Aeris Weather Data API Node Client', function () {
 
 			result.response.responses.length.should.equal(3);
 
-			result.response.responses[0].request.should.equal('/observations/summary/closest?limit=1&p=-45.039948%2C168.695312&filter=allstations');
+			result.response.responses[0].request.should.equal('/observations/summary/closest?limit=1&p=-45.039948%2C168.695312&filter=allstations&query=qcmin%3A10');
 			result.response.responses[1].request.should.equal('/forecasts/closest?limit=7&p=-45.039948%2C168.695312&filter=day');
 			result.response.responses[2].request.should.equal('/forecasts/closest?limit=169&p=-45.039948%2C168.695312&filter=1hr&from=-1hour');
 
